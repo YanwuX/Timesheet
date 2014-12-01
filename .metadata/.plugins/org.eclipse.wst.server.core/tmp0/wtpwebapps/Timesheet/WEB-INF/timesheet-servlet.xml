@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+    	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	  	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd        
+    	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<mvc:annotation-driven/>
+	
+	<tx:annotation-driven/>
+	
+	<context:component-scan base-package="com.mercury.timesheet"/>
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/WEB-INF/pages/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+	
+	<bean id="registerController" class="com.mercury.timesheet.controllers.RegisterController">
+		<property name="rs" ref="registerService"/>
+		<property name="ms" ref="mailService"/>
+	</bean>
+	
+	<bean id="registerService" class="com.mercury.timesheet.services.RegisterService">
+		<property name="passwordEncoder" ref="passwordEncoder"/>
+		<property name="ud" ref="userDao"/>
+		<property name="ed" ref="employeeDao"/>
+	</bean>
+	
+	<bean id="mailService" class="com.mercury.timesheet.services.MailService"/>
+	
+	<bean id="passwordEncoder" 
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+		
+	<bean id="userDao" class="com.mercury.timesheet.daos.impl.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="employeeDao" class="com.mercury.timesheet.daos.impl.EmployeeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="registrationValidationController"
+		class="com.mercury.timesheet.controllers.RegistrationValidationController">
+		<property name="rvs" ref="registrationValidationService"/>
+	</bean>
+	
+	<bean id="registrationValidationService" 
+		class="com.mercury.timesheet.services.RegistrationValidationService">
+		<property name="ed" ref="employeeDao"/>
+		<property name="ud" ref="userDao"/>
+	</bean>
+	
+	<bean id="changeHolidayController" 
+		class="com.mercury.timesheet.controllers.ChangeHolidayController">
+		<property name="chs" ref="changeHolidayService"/>
+	</bean>
+	
+	<bean id="changeHolidayService"
+		class="com.mercury.timesheet.services.ChangeHolidayService">
+		<property name="hd" ref="holidayDao"/>
+	</bean>
+	
+	<bean id="holidayDao" class="com.mercury.timesheet.daos.impl.HolidayDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="pageController" class="com.mercury.timesheet.controllers.PageController"/>
+	
+	<bean id="mainController" class="com.mercury.timesheet.controllers.MainController">
+		<property name="ms" ref="mainService"/>
+	</bean>
+	
+	<bean id="mainService" class="com.mercury.timesheet.services.MainService">
+		<property name="ud" ref="userDao"/>
+	</bean>
+	
+	<bean id="insertionController" class="com.mercury.timesheet.controllers.InsertionController">
+		<property name="is" ref="insertionService"/>
+	</bean>
+	
+	<bean id="insertionService" class="com.mercury.timesheet.services.InsertionService">
+		<property name="ud" ref="userDao"/>
+		<property name="td" ref="timesheetDao"/>
+		<property name="hd" ref="holidayDao"/>
+	</bean>
+	
+	<bean id="timesheetDao" class="com.mercury.timesheet.daos.impl.TimesheetDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="showNameService" class="com.mercury.timesheet.services.ShowNameService">
+		<property name="ed" ref="employeeDao"/>
+	</bean>
+	
+	<bean id="showHoursService" class="com.mercury.timesheet.services.ShowHoursService">
+		<property name="ud" ref="userDao"/>
+	</bean>
+	
+	<!--  
+	<bean id="showHoursResource" class="com.mercury.timesheet.resources.ShowHoursResource"/>
+	
+	<bean id="showTimesheetResource"
+		class="com.mercury.timesheet.resources.ShowTimesheetResource"/>
+	
+	<bean id="showRecordResource"
+		class="com.mercury.timesheet.resources.ShowRecordResource"/>
+	-->
+	
+	<bean id="showTimesheetService" class="com.mercury.timesheet.services.ShowTimesheetService">
+		<property name="td" ref="timesheetDao"/>
+	</bean>
+	
+	<bean id="showHoursController" 
+		class="com.mercury.timesheet.controllers.ShowHoursController">
+		<property name="shs" ref="showHoursService"/>
+	</bean>
+	
+	<bean id="showTimesheetController" 
+		class="com.mercury.timesheet.controllers.ShowTimesheetController">
+		<property name="sts" ref="showTimesheetService"/>
+	</bean>
+	
+	<bean id="checkHolidayController" 
+		class="com.mercury.timesheet.controllers.CheckHolidayController">
+		<property name="checkHolidayService" ref="checkHolidayService"/>
+	</bean>
+	
+	<bean id="checkHolidayService" class="com.mercury.timesheet.services.CheckHolidayService">
+		<property name="hd" ref="holidayDao"/>
+	</bean>
+</beans>
